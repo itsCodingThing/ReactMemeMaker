@@ -1,0 +1,14 @@
+@import url("https://fonts.googleapis.com/css?family=Lora:400,400i,700,700i");
+
+@font-face {
+    font-family: Impact;
+    src: url("/fonts/impact.ttf");
+}
+
+html,
+body {
+    height: 100%;
+    font-family: "Lora", serif;
+    background: #fff;
+    color: #666;
+}
