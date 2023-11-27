@@ -1,8 +1,14 @@
 import { initializeApp, cert, App } from "firebase-admin/app";
 import { getStorage } from "firebase-admin/storage";
 
-let app;
+const config = {
+    projectId: process.env.project_id,
+    privateKey: process.env.private_key,
+    clientEmail: process.env.client_email,
+};
+const bucket = process.env.bucket;
 
+let app;
 if (process.env.NODE_ENV === "development") {
     // In development mode, use a global variable so that the value
     // is preserved across module reloads caused by HMR (Hot Module Replacement).
@@ -12,12 +18,8 @@ if (process.env.NODE_ENV === "development") {
 
     if (!globalWithFire._firebaseApp) {
         app = initializeApp({
-            credential: cert({
-                projectId: process.env.project_id,
-                privateKey: process.env.private_key,
-                clientEmail: process.env.client_email,
-            }),
-            storageBucket: process.env.google_bucket,
+            credential: cert(config),
+            storageBucket: bucket,
         });
 
         globalWithFire._firebaseApp = app;
@@ -25,12 +27,8 @@ if (process.env.NODE_ENV === "development") {
     app = globalWithFire._firebaseApp;
 } else {
     app = initializeApp({
-        credential: cert({
-            projectId: process.env.project_id,
-            privateKey: process.env.private_key,
-            clientEmail: process.env.client_email,
-        }),
-        storageBucket: process.env.google_bucket,
+        credential: cert(config),
+        storageBucket: bucket,
     });
 }
 
@@ -57,10 +55,14 @@ export async function getAllImages(): Promise<SavedImage[]> {
                 name: file.name,
                 id: file.id ?? "",
                 publicUrl: file.publicUrl(),
-                src: "",
+                src: file.publicUrl(),
             };
         })
     );
 
     return data;
+}
+
+export function getDownloadUrl(id: string) {
+    return GBucket.file(id).publicUrl();
 }

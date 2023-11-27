@@ -14,7 +14,7 @@ export default function RootLayout(props: { children: ReactNode }) {
     return (
         <html lang="en">
             <body>
-                <main className="container mx-auto grid grid-cols-4">
+                <main className="container mx-auto grid grid-cols-4 py-3">
                     <div className="col-span-1">
                         <nav>Make-a-Meme</nav>
                         <p>
