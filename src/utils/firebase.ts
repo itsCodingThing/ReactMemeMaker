@@ -1,6 +1,30 @@
 import { initializeApp, cert, App } from "firebase-admin/app";
 import { getStorage } from "firebase-admin/storage";
 
+export const photos = [
+    { src: "/images/vict-baby.png" },
+    { src: "/images/ned.jpeg" },
+    { src: "/images/devilgirl.jpg" },
+    { src: "/images/trump.jpg" },
+    { src: "/images/one-does-not.jpg" },
+    { src: "/images/dank.png" },
+    { src: "/images/boy.png" },
+    { src: "/images/sad.png" },
+    { src: "/images/wolf.png" },
+    { src: "/images/fry.jpg" },
+    { src: "/images/jobs.jpg" },
+    { src: "/images/phone.jpg" },
+    { src: "/images/oldie.png" },
+    { src: "/images/image.png" },
+    { src: "/images/doubt.png" },
+    { src: "/images/crying.png" },
+    { src: "/images/sponge.png" },
+    { src: "/images/dog.png" },
+    { src: "/images/frust.png" },
+    { src: "/images/web.png" },
+    { src: "/images/penguin.png" },
+];
+
 const config = {
     projectId: process.env.project_id,
     privateKey: process.env.private_key,
@@ -42,25 +66,49 @@ export interface SavedImage {
 }
 
 export async function getAllImages(): Promise<SavedImage[]> {
-    const [files] = await GBucket.getFiles();
-    const data = await Promise.all(
-        files.map(async (file) => {
-            const [isPublic] = await file.isPublic();
+    return photos.map((photo) => {
+        const fileName = photo.src.split("/").pop() ?? "";
 
-            if (!isPublic) {
-                await file.makePublic();
-            }
+        return {
+            name: fileName,
+            id: "",
+            publicUrl: photo.src,
+            src: photo.src,
+        };
+    });
 
-            return {
-                name: file.name,
-                id: file.id ?? "",
-                publicUrl: file.publicUrl(),
-                src: file.publicUrl(),
-            };
-        })
-    );
+    // try {
+    //     const [files] = await GBucket.getFiles();
+    //     const data = await Promise.all(
+    //         files.map(async (file) => {
+    //             const [isPublic] = await file.isPublic();
 
-    return data;
+    //             if (!isPublic) {
+    //                 await file.makePublic();
+    //             }
+
+    //             return {
+    //                 name: file.name,
+    //                 id: file.id ?? "",
+    //                 publicUrl: file.publicUrl(),
+    //                 src: file.publicUrl(),
+    //             };
+    //         })
+    //     );
+
+    //     return data;
+    // } catch (error) {
+    //     return photos.map((photo) => {
+    //         const fileName = photo.src.split("/").pop() ?? "";
+
+    //         return {
+    //             name: fileName,
+    //             id: "",
+    //             publicUrl: photo.src,
+    //             src: photo.src,
+    //         };
+    //     });
+    // }
 }
 
 export function getDownloadUrl(id: string) {

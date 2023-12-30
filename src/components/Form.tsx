@@ -1,12 +1,7 @@
-interface MemeFormProps {
-    changeText: () => {};
-    download: () => {};
-}
-
 export default function MemeForm() {
     return (
-        <div>
-            <form>
+        <form>
+            <div className="mb-2">
                 <label htmlFor="toptext">Top Text</label>
                 <input
                     className="form-control"
@@ -15,8 +10,9 @@ export default function MemeForm() {
                     id="toptext"
                     placeholder="Add text to the top"
                 />
-            </form>
-            <form>
+            </div>
+
+            <div className="mb-2">
                 <label htmlFor="bottomtext">Bottom Text</label>
                 <input
                     className="form-control"
@@ -25,8 +21,9 @@ export default function MemeForm() {
                     id="bottomtext"
                     placeholder="Add text to the bottom"
                 />
-            </form>
-            <button className="btn btn-primary">Download Meme!</button>
-        </div>
+            </div>
+
+            <button className="px-2 py-1 bg-orange-700 rounded">Download Meme!</button>
+        </form>
     );
 }
