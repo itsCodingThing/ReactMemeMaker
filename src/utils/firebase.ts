@@ -1,5 +1,6 @@
 import { initializeApp, cert, App } from "firebase-admin/app";
 import { getStorage } from "firebase-admin/storage";
+import { Base64 } from "js-base64";
 
 export const photos = [
     { src: "/images/vict-baby.png" },
@@ -73,7 +74,7 @@ export async function getAllImages(): Promise<SavedImage[]> {
             name: fileName,
             id: "",
             publicUrl: photo.src,
-            src: photo.src,
+            src: Base64.encodeURI(photo.src),
         };
     });
 
