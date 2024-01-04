@@ -1,4 +1,4 @@
-import CanvasAPI from "@/utils/canvas";
+import type CanvasAPI from "@/utils/canvas";
 import { createContext, useContext } from "react";
 
 // const CanvasContext = createContext<HTMLCanvasElement | null>(null);

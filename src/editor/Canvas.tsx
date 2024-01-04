@@ -1,17 +1,20 @@
 "use client";
-import { ReactNode, useEffect, useState } from "react";
+
+import { Fragment, type ReactNode, useState } from "react";
+import { createPortal } from "react-dom";
+import { FaDownload as DownloadIcon } from "react-icons/fa";
+import { IoText as TextIcon } from "react-icons/io5";
 import { CanvasProvider, useCanvas } from "./Context";
 import CanvasAPI from "@/utils/canvas";
-import { FaDownload as DownloadIcon } from "react-icons/fa";
 
 export function GenerateImage() {
     const canvas = useCanvas();
 
     return (
         <button
-            className="text-5xl bg-white absolute top-0 right-10"
+            className="mr-1 bg-white p-1 text-4xl"
             onClick={() => {
-                canvas?.download();
+                void canvas?.download();
             }}
         >
             <DownloadIcon />
@@ -20,19 +23,64 @@ export function GenerateImage() {
 }
 
 export function AddText({ text = "", x, y }: { text?: string; x: number; y: number }) {
+    const [inputText, setInputText] = useState(text);
+    const [isSelected, setIsSelected] = useState(false);
     const canvas = useCanvas();
 
-    if (canvas) {
-        canvas.drawText(text, x, y);
-    }
+    return (
+        <Fragment>
+            <button
+                className="mr-1 bg-white p-1 text-4xl"
+                onClick={() => {
+                    setIsSelected(true);
+                }}
+            >
+                <TextIcon />
+            </button>
+            {isSelected
+                ? createPortal(
+                      <div className="absolute left-0 top-0 grid h-full w-full place-items-center">
+                          <div className="rounded">
+                              <input
+                                  className="w-full rounded border-2 border-black bg-white p-1"
+                                  type="text"
+                                  placeholder="add text for image"
+                                  onChange={(e) => {
+                                      setInputText(e.currentTarget.value);
+                                  }}
+                              />
+                              <button
+                                  className="mr-1 bg-blue-500 p-2 font-bold"
+                                  onClick={() => {
+                                      if (canvas) {
+                                          canvas.drawText(inputText, x, y);
+                                      }
 
-    return null;
+                                      setIsSelected(false);
+                                  }}
+                              >
+                                  save
+                              </button>
+                              <button
+                                  onClick={() => {
+                                      setIsSelected(false);
+                                  }}
+                              >
+                                  cancel
+                              </button>
+                          </div>
+                      </div>,
+                      document.body,
+                  )
+                : null}
+        </Fragment>
+    );
 }
 
 export function AddImage() {
     const canvas = useCanvas();
 
-    if (canvas) {
+    if (canvas != null) {
         canvas.drawImage();
     }
 
@@ -43,14 +91,20 @@ export default function Canvas({ children, loadImages = [] }: { children: ReactN
     const [canvas, setCanvas] = useState<CanvasAPI | null>(null);
 
     return (
-        <div className="relative">
+        <div className="relative h-fit w-fit">
+            {canvas != null ? (
+                <CanvasProvider value={canvas}>{children}</CanvasProvider>
+            ) : (
+                <span className="text-5xl">Loading Canvas</span>
+            )}
+
             <canvas
                 ref={(el) => {
                     if (el) {
                         const canvasInstance = new CanvasAPI(el);
 
-                        if (!canvas && loadImages.length > 0) {
-                            canvasInstance.loadImages(loadImages).then(() => {
+                        if (canvas == null && loadImages.length > 0) {
+                            void canvasInstance.loadImages(loadImages).then(() => {
                                 setCanvas(canvasInstance);
                             });
                         }
@@ -60,11 +114,17 @@ export default function Canvas({ children, loadImages = [] }: { children: ReactN
                         }
                     }
                 }}
-                onMouseMove={() => {
-                    console.log("mouse move");
+                onMouseDown={(e) => {
+                    if (canvas) {
+                        canvas.selectText(e.clientX, e.clientY);
+                    }
+                }}
+                onMouseMove={(e) => {
+                    if (canvas) {
+                        // canvas.selectAndMoveText(e.clientX, e.clientY);
+                    }
                 }}
             ></canvas>
-            {canvas ? <CanvasProvider value={canvas}>{children}</CanvasProvider> : null}
         </div>
     );
 }

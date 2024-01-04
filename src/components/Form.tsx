@@ -23,7 +23,7 @@ export default function MemeForm() {
                 />
             </div>
 
-            <button className="px-2 py-1 bg-orange-700 rounded">Download Meme!</button>
+            <button className="rounded bg-orange-700 px-2 py-1">Download Meme!</button>
         </form>
     );
 }

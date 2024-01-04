@@ -4,14 +4,14 @@ export default function ImageMasonry({
     photos,
     openImage,
 }: {
-    photos: { src: string }[];
-    openImage: (index: number) => {};
+    photos: Array<{ src: string }>;
+    openImage: (index: number) => void;
 }) {
     return (
-        <div className="grid grid-cols-4 lg:grid-cols-6 gap-2">
+        <div className="grid grid-cols-4 gap-2 lg:grid-cols-6">
             {photos.map((image, index) => (
-                <div className="w-[168px] h-[168px] relative" key={image.src}>
-                    <span className="font-['Impact'] absolute top-0 w-full text-center text-xl uppercase p-1 text-white bg-slate-800/80">
+                <div className="relative h-[168px] w-[168px]" key={image.src}>
+                    <span className="absolute top-0 w-full bg-slate-800/80 p-1 text-center font-['Impact'] text-xl uppercase text-white">
                         Top text
                     </span>
                     <img
@@ -22,10 +22,12 @@ export default function ImageMasonry({
                         }}
                         alt={index.toString()}
                         src={image.src}
-                        onClick={() => openImage(index)}
+                        onClick={() => {
+                            openImage(index);
+                        }}
                         role="presentation"
                     />
-                    <span className="font-['Impact'] absolute bottom-0 w-full text-center text-xl uppercase p-1 text-white bg-slate-800/80">
+                    <span className="absolute bottom-0 w-full bg-slate-800/80 p-1 text-center font-['Impact'] text-xl uppercase text-white">
                         Bottom text
                     </span>
                 </div>

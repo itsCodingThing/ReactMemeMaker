@@ -1,4 +1,4 @@
-import { initializeApp, cert, App } from "firebase-admin/app";
+import { initializeApp, cert, type App } from "firebase-admin/app";
 import { getStorage } from "firebase-admin/storage";
 import { Base64 } from "js-base64";
 
@@ -37,7 +37,7 @@ let app;
 if (process.env.NODE_ENV === "development") {
     // In development mode, use a global variable so that the value
     // is preserved across module reloads caused by HMR (Hot Module Replacement).
-    let globalWithFire = global as typeof globalThis & {
+    const globalWithFire = global as typeof globalThis & {
         _firebaseApp?: App;
     };
 
