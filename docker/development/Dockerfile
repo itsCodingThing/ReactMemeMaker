@@ -42,4 +42,4 @@ EXPOSE 3000
 ENV PORT 3000
 ENV HOSTNAME localhost
 
-CMD ["npm", "run dev"]
+CMD ["npm", "run", "dev"]
