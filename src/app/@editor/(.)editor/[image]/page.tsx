@@ -3,7 +3,7 @@
 import { Base64 } from "js-base64";
 import { createPortal } from "react-dom";
 import { IoMdCloseCircleOutline as CloseIcon } from "react-icons/io";
-import Canvas, { AddImage, AddText, GenerateImage } from "@/editor/Canvas";
+import Canvas from "@/editor/Canvas";
 import { useRouter } from "next/navigation";
 
 function Modal({ imageSrc, close = () => {} }: { imageSrc: string; close?: () => void }) {
@@ -19,10 +19,11 @@ function Modal({ imageSrc, close = () => {} }: { imageSrc: string; close?: () =>
                     <CloseIcon />
                 </button>
                 <div className="grid h-full place-items-center">
-                    <Canvas loadImages={[imageSrc]}>
-                        <AddImage />
+                    <Canvas img={imageSrc}>
+                        {/* <AddImage />
                         <AddText text="Random Text" x={100} y={300} />
-                        <GenerateImage />
+                        <GenerateImage /> */}
+                        <div></div>
                     </Canvas>
                 </div>
             </div>

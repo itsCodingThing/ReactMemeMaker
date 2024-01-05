@@ -1,7 +1,5 @@
 "use client";
 
-import { fileSave } from "browser-fs-access";
-
 const MAXSIZE = 700;
 
 export function scaleDownImageSize(imageWidth: number, imageHeight: number) {
@@ -33,7 +31,7 @@ export function scaleDownImageSize(imageWidth: number, imageHeight: number) {
     return { width: imageWidth, height: imageHeight };
 }
 
-export async function loadImage(src: string, signal?: AbortSignal) {
+export async function loadImageElement(src: string) {
     return await new Promise<HTMLImageElement>((resolve, reject) => {
         const img = document.createElement("img");
         img.setAttribute("src", src);
@@ -43,7 +41,7 @@ export async function loadImage(src: string, signal?: AbortSignal) {
             () => {
                 resolve(img);
             },
-            { signal, once: true },
+            { once: true },
         );
 
         img.addEventListener(
@@ -51,157 +49,163 @@ export async function loadImage(src: string, signal?: AbortSignal) {
             () => {
                 reject(new Error("image loading error"));
             },
-            { signal, once: true },
+            { once: true },
         );
     });
 }
 
 export default class CanvasAPI {
+    readonly #offscreenCanvas: OffscreenCanvas = new OffscreenCanvas(700, 700);
+    readonly #offscreenCanvasCtx2d: OffscreenCanvasRenderingContext2D = this.#offscreenCanvas.getContext("2d")!;
+
     readonly #canvas: HTMLCanvasElement;
-    readonly #ctx: CanvasRenderingContext2D;
-
-    readonly #state = {
-        inSelectMode: false,
-    };
-
-    #imgs: HTMLImageElement[] = [];
-    #numTexts: number = 0;
-    #texts: Array<{
-        id: number;
-        value: string;
-        x: number;
-        y: number;
-        color: string;
-        width: number;
-        height: number;
-        font: string;
-        isSelected: boolean;
-    }> = [];
+    readonly #imgs: HTMLImageElement[] = [];
 
     constructor(el: HTMLCanvasElement) {
         this.#canvas = el;
-        this.#ctx = el.getContext("2d")!;
     }
 
-    #cursorPosition(clientX: number, clientY: number) {
-        const rect = this.#canvas.getBoundingClientRect();
-
-        return {
-            cursorX: clientX - rect.left,
-            cursorY: clientY - rect.top,
-        };
+    render() {
+        this.#drawImage();
+        this.#canvas.getContext("2d")?.drawImage(this.#offscreenCanvas, 0, 0);
     }
 
-    async loadImages(srcs: string[]) {
-        const images = await Promise.all(srcs.map(async (src) => await loadImage(src)));
-        this.#imgs = images;
+    async loadImage(src: string) {
+        const image = await loadImageElement(src);
+        this.#imgs.push(image);
     }
 
-    drawImage() {
+    #drawImage() {
         this.#imgs.forEach((img) => {
             const size = scaleDownImageSize(img.naturalWidth, img.naturalHeight);
+
             this.#canvas.setAttribute("width", size.width.toString());
             this.#canvas.setAttribute("height", size.height.toString());
 
-            this.#ctx.drawImage(img, 0, 0, size.width, size.height);
+            this.#offscreenCanvasCtx2d.drawImage(img, 0, 0, size.width, size.height);
         });
     }
 
-    drawText(text: string, x: number, y: number) {
-        const color = "orange";
-        const font = "50px Impact";
+    // readonly #state = {
+    //     inSelectMode: false,
+    // };
+    // #numTexts: number = 0;
+    // #texts: Array<{
+    //     id: number;
+    //     value: string;
+    //     x: number;
+    //     y: number;
+    //     color: string;
+    //     width: number;
+    //     height: number;
+    //     font: string;
+    //     isSelected: boolean;
+    // }> = [];
+    // #cursorPosition(clientX: number, clientY: number) {
+    //     const rect = this.#canvas.getBoundingClientRect();
 
-        this.#numTexts = this.#numTexts + 1;
-        const { actualBoundingBoxRight, actualBoundingBoxLeft } = this.#ctx.measureText(text);
+    //     return {
+    //         cursorX: clientX - rect.left,
+    //         cursorY: clientY - rect.top,
+    //     };
+    // }
 
-        const textNode = {
-            id: this.#numTexts,
-            value: text,
-            x,
-            y,
-            color,
-            width: actualBoundingBoxLeft + actualBoundingBoxRight,
-            height: 0,
-            font,
-            isSelected: false,
-        };
-        this.#texts.push(textNode);
+    // drawText(text: string, x: number, y: number) {
+    //     const color = "orange";
+    //     const font = "50px Impact";
 
-        this.#texts.forEach((txt) => {
-            this.#ctx.font = txt.font;
-            this.#ctx.fillStyle = txt.color;
-            this.#ctx.fillText(txt.value, txt.x, txt.y);
-        });
+    //     this.#numTexts = this.#numTexts + 1;
+    //     const { actualBoundingBoxRight, actualBoundingBoxLeft } = this.#ctx.measureText(text);
 
-        return textNode;
-    }
+    //     const textNode = {
+    //         id: this.#numTexts,
+    //         value: text,
+    //         x,
+    //         y,
+    //         color,
+    //         width: actualBoundingBoxLeft + actualBoundingBoxRight,
+    //         height: 0,
+    //         font,
+    //         isSelected: false,
+    //     };
+    //     this.#texts.push(textNode);
 
-    selectText(x: number, y: number) {
-        if (this.#numTexts === 0) return;
-        const position = this.#cursorPosition(x, y);
+    //     this.#texts.forEach((txt) => {
+    //         this.#ctx.font = txt.font;
+    //         this.#ctx.fillStyle = txt.color;
+    //         this.#ctx.fillText(txt.value, txt.x, txt.y);
+    //     });
 
-        console.log(position);
+    //     return textNode;
+    // }
 
-        const list = this.#texts.map((txt) => {
-            console.log(txt);
-            if (
-                position.cursorX >= x &&
-                position.cursorY <= x + txt.width &&
-                position.cursorY >= y &&
-                position.cursorY <= y + 50
-            ) {
-                return {
-                    ...txt,
-                    x: position.cursorX,
-                    y: position.cursorY,
-                    isSelected: true,
-                };
-            }
+    // selectText(x: number, y: number) {
+    //     if (this.#numTexts === 0) return;
 
-            return txt;
-        });
-        this.#texts = list;
-    }
+    //     const position = this.#cursorPosition(x, y);
 
-    selectAndMoveText(x: number, y: number) {
-        if (this.#numTexts === 0) return;
+    //     console.log(position);
 
-        const position = this.#cursorPosition(x, y);
-        const list = this.#texts.map((txt) => {
-            if (txt.isSelected) {
-                return {
-                    ...txt,
-                    x: position.cursorX,
-                    y: position.cursorY,
-                };
-            }
+    //     const list = this.#texts.map((txt) => {
+    //         console.log(txt);
+    //         if (
+    //             position.cursorX >= x &&
+    //             position.cursorY <= x + txt.width &&
+    //             position.cursorY >= y &&
+    //             position.cursorY <= y + 50
+    //         ) {
+    //             return {
+    //                 ...txt,
+    //                 x: position.cursorX,
+    //                 y: position.cursorY,
+    //                 isSelected: true,
+    //             };
+    //         }
 
-            return txt;
-        });
-        this.#texts = list;
+    //         return txt;
+    //     });
+    //     this.#texts = list;
+    // }
 
-        this.drawImage();
-        this.#texts.forEach((txt) => {
-            this.#ctx.font = txt.font;
-            this.#ctx.fillStyle = txt.color;
-            this.#ctx.fillText(txt.value, txt.x, txt.y);
-        });
-    }
+    // selectAndMoveText(x: number, y: number) {
+    //     if (this.#numTexts === 0) return;
 
-    download() {
-        async function saveBlobToFile(blob: Blob | null) {
-            if (blob) {
-                await fileSave(blob, {
-                    fileName: "meme.png",
-                    startIn: "downloads",
-                });
-            }
+    //     const position = this.#cursorPosition(x, y);
+    //     const list = this.#texts.map((txt) => {
+    //         if (txt.isSelected) {
+    //             return {
+    //                 ...txt,
+    //                 x: position.cursorX,
+    //                 y: position.cursorY,
+    //             };
+    //         }
 
-            console.log("no file to save");
-        }
+    //         return txt;
+    //     });
+    //     this.#texts = list;
 
-        this.#canvas.toBlob((blob) => {
-            void saveBlobToFile(blob);
-        }, "image/png");
-    }
+    //     this.drawImage();
+    //     this.#texts.forEach((txt) => {
+    //         this.#ctx.font = txt.font;
+    //         this.#ctx.fillStyle = txt.color;
+    //         this.#ctx.fillText(txt.value, txt.x, txt.y);
+    //     });
+    // }
+
+    // download() {
+    //     async function saveBlobToFile(blob: Blob | null) {
+    //         if (blob) {
+    //             await fileSave(blob, {
+    //                 fileName: "meme.png",
+    //                 startIn: "downloads",
+    //             });
+    //         }
+
+    //         console.log("no file to save");
+    //     }
+
+    //     this.#canvas.toBlob((blob) => {
+    //         void saveBlobToFile(blob);
+    //     }, "image/png");
+    // }
 }

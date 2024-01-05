@@ -1,0 +1,21 @@
+services:
+  nextjs-server:
+    container_name: react-meme-maker
+    build:
+      context: ../../
+      dockerfile: docker/development/Dockerfile
+    working_dir: /react-meme-maker
+    environment:
+      - PORT=3000
+    ports:
+      - 3000:3000
+    # depeding on your project setup volumes
+    volumes:
+      - ~/projects/ReactMemeMaker:/react-meme-maker
+    # depeding on your project setup network
+    networks:
+      - container-connect
+
+networks:
+  container-connect:
+    external: true
