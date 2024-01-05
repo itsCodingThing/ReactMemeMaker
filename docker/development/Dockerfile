@@ -3,7 +3,6 @@ FROM node:20-alpine AS base
 WORKDIR /react-meme-maker
 ENV NODE_ENV=development
 
-USER nextjs
 EXPOSE 3000
 COPY . .
 
