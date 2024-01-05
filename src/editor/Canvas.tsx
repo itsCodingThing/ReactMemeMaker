@@ -9,6 +9,8 @@ export default function Canvas({ children, img = "" }: { children: ReactNode; im
     useEffect(() => {
         async function loadAndRender() {
             if (canvasRef.current) {
+                console.log(canvasRef.current);
+
                 const canvas = new CanvasAPI(canvasRef.current);
 
                 await canvas.loadImage(img);
