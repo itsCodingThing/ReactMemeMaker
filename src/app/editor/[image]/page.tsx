@@ -1,5 +1,5 @@
 import { Base64 } from "js-base64";
-import Canvas, { AddImage, AddText, GenerateImage } from "@/editor/Canvas";
+import Board from "@/components/editor/canvas";
 
 interface PageProps {
     params: { image: string };
@@ -10,11 +10,9 @@ export default function EditorPage({ params }: PageProps) {
 
     return (
         <div className="container mx-auto bg-white">
-            <Canvas loadImages={[imageSrc]}>
-                <AddImage />
-                <AddText text="Random Text" x={0} y={300} />
-                <GenerateImage />
-            </Canvas>
+            <Board img={imageSrc}>
+                <div></div>
+            </Board>
         </div>
     );
 }

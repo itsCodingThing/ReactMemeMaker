@@ -2,19 +2,17 @@
     "name": "react-meme-maker",
     "version": "2.0.0",
     "scripts": {
-        "dev": "next",
+        "dev": "next --turbo",
         "build": "next build",
         "start": "next start",
         "lint": "next lint"
     },
     "dependencies": {
-        "@tanstack/react-query": "^5.8.7",
-        "@tanstack/react-query-next-experimental": "^5.0.0",
         "@types/wicg-file-system-access": "^2023.10.4",
         "browser-fs-access": "^0.35.0",
-        "fabric": "^6.0.0-beta16",
         "firebase-admin": "^12.0.0",
         "framer-motion": "^10.16.5",
+        "jotai": "^2.6.1",
         "js-base64": "^3.7.5",
         "next": "^14.0.3",
         "pino": "^8.16.2",
@@ -22,11 +20,9 @@
         "react": "^18.2.0",
         "react-dom": "^18.2.0",
         "react-icons": "^4.12.0",
-        "styled-components": "^6.1.0",
         "zod": "^3.22.4"
     },
     "devDependencies": {
-        "@tanstack/react-query-devtools": "^5.0.0",
         "@types/jsdom": "^21.1.5",
         "@types/node": "^20",
         "@types/react": "^18",
