@@ -26,9 +26,11 @@ function SelectButton() {
 
 function GenerateImage() {
     const [canvas] = useCanvasImperativeAPI();
+    const [mode] = useCanvasMode();
 
     return (
         <button
+            disabled={mode.inSelectMode}
             className="bg-white p-1 text-4xl"
             onClick={() => {
                 canvas?.download();
@@ -44,11 +46,12 @@ function AddTextButton() {
     const [isSelected, setIsSelected] = useState(false);
 
     const [canvas] = useCanvasImperativeAPI();
+    const [mode] = useCanvasMode();
 
     return (
         <Fragment>
             <button
-                disabled={isSelected}
+                disabled={isSelected || mode.inSelectMode}
                 className={isSelected ? "mr-1 bg-black p-1 text-4xl" : "mr-1 bg-white p-1 text-4xl"}
                 onClick={() => {
                     setIsSelected(true);
