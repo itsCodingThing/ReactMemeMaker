@@ -95,7 +95,9 @@ export default class CanvasImperativeAPI {
         this.#canvas.addEventListener(
             "mousedown",
             (e) => {
-                this.selectText(e.clientX, e.clientY);
+                if (this.#isSelectModeActive) {
+                    this.selectText(e.clientX, e.clientY);
+                }
             },
             { signal: this.#controller.signal },
         );
@@ -103,7 +105,9 @@ export default class CanvasImperativeAPI {
         this.#canvas.addEventListener(
             "mousemove",
             (e) => {
-                this.moveText(e.clientX, e.clientY);
+                if (this.#isSelectModeActive) {
+                    this.moveText(e.clientX, e.clientY);
+                }
             },
             { signal: this.#controller.signal },
         );
@@ -111,7 +115,9 @@ export default class CanvasImperativeAPI {
         this.#canvas.addEventListener(
             "mouseup",
             (e) => {
-                this.unselectText();
+                if (this.#isSelectModeActive) {
+                    this.unselectText();
+                }
             },
             { signal: this.#controller.signal },
         );
