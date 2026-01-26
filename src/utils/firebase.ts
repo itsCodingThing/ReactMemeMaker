@@ -42,37 +42,4 @@ export async function getAllImages(): Promise<SavedImage[]> {
 			src: Base64.encodeURI(photo.src),
 		};
 	});
-
-	// try {
-	//     const [files] = await GBucket.getFiles();
-	//     const data = await Promise.all(
-	//         files.map(async (file) => {
-	//             const [isPublic] = await file.isPublic();
-
-	//             if (!isPublic) {
-	//                 await file.makePublic();
-	//             }
-
-	//             return {
-	//                 name: file.name,
-	//                 id: file.id ?? "",
-	//                 publicUrl: file.publicUrl(),
-	//                 src: file.publicUrl(),
-	//             };
-	//         })
-	//     );
-
-	//     return data;
-	// } catch (error) {
-	//     return photos.map((photo) => {
-	//         const fileName = photo.src.split("/").pop() ?? "";
-
-	//         return {
-	//             name: fileName,
-	//             id: "",
-	//             publicUrl: photo.src,
-	//             src: photo.src,
-	//         };
-	//     });
-	// }
 }
