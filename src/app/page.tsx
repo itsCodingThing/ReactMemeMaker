@@ -1,5 +1,7 @@
 import Image from "next/image";
 import { list } from "@vercel/blob";
+import Link from "next/link";
+import { encode } from "js-base64";
 
 export default async function IndexPage() {
 	const images = await list();
@@ -32,16 +34,17 @@ export default async function IndexPage() {
 			<div className="col-span-3">
 				<div className="columns-1 sm:columns-2 md:columns-3 lg:columns-4">
 					{images.blobs.map((image, index) => (
-						<Image
-							key={image.pathname}
-							className="cursor-pointer border-4 border-orange-400 m-1"
-							width={168}
-							height={168}
-							alt={index.toString()}
-							src={image.url}
-							role="presentation"
-							priority
-						/>
+						<Link key={image.pathname} href={`/editor/${encode(image.url)}`}>
+							<Image
+								className="cursor-pointer border-4 border-orange-400 m-1"
+								width={168}
+								height={168}
+								alt={index.toString()}
+								src={image.url}
+								role="presentation"
+								priority
+							/>
+						</Link>
 					))}
 				</div>
 			</div>
