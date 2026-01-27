@@ -1,0 +1,32 @@
+"use client";
+
+import { encode } from "js-base64";
+import Image from "next/image";
+import Link from "next/link";
+
+interface ImageGridProps {
+	images: {
+		pathname: string;
+		url: string;
+	}[];
+}
+
+export default function ImageGrid({ images }: ImageGridProps) {
+	return (
+		<div className="columns-1 sm:columns-2 md:columns-3 lg:columns-4">
+			{images.map((image) => (
+				<Link key={image.pathname} href={`/editor/${encode(image.url)}`}>
+					<Image
+						className="cursor-pointer border-4 border-orange-400 m-1"
+						width={168}
+						height={168}
+						alt={image.pathname}
+						src={image.url}
+						role="presentation"
+						priority
+					/>
+				</Link>
+			))}
+		</div>
+	);
+}
