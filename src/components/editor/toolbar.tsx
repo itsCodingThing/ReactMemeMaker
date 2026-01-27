@@ -1,44 +1,33 @@
-import { useState, Fragment } from "react";
-import { createPortal } from "react-dom";
-import { useCanvasImperativeAPI, useCanvasMode } from "./canvas-context";
+import { useSetAtom } from "jotai";
 import { DownloadIcon, HandPointer, TextIcon } from "../icons";
+import { canvasStageRefAtom, canvasTextAtom } from "./canvas-atoms";
+import { useAtomValue } from "jotai/react";
 
 function SelectButton() {
-	const [mode, setMode] = useCanvasMode();
-	const [canvas] = useCanvasImperativeAPI();
-
 	return (
-		<button
-			className={
-				mode.inSelectMode
-					? "mr-1 bg-black p-1 text-4xl"
-					: "mr-1 bg-white p-1 text-4xl"
-			}
-			onClick={() => {
-				if (canvas) {
-					setMode((prev) => {
-						canvas.isSelectModeActive = !prev.inSelectMode;
-						return { inSelectMode: !prev.inSelectMode };
-					});
-				}
-			}}
-		>
+		<button className="cursor-pointer p-2 text-2xl">
 			<HandPointer />
 		</button>
 	);
 }
 
 function GenerateImage() {
-	const [canvas] = useCanvasImperativeAPI();
-	const [mode] = useCanvasMode();
+	const canvasStageRef = useAtomValue(canvasStageRefAtom);
 
 	return (
 		<button
-			disabled={mode.inSelectMode}
-			className="bg-white p-1 text-4xl"
 			onClick={() => {
-				canvas?.download();
+				if (canvasStageRef) {
+					const link = document.createElement("a");
+					link.download = "download.png";
+					link.href = canvasStageRef.toDataURL();
+					link.setAttribute("class", "hidden");
+					document.body.appendChild(link);
+					link.click();
+					document.body.removeChild(link);
+				}
 			}}
+			className="cursor-pointer p-2 text-2xl"
 		>
 			<DownloadIcon />
 		</button>
@@ -46,64 +35,17 @@ function GenerateImage() {
 }
 
 function AddTextButton() {
-	const [inputText, setInputText] = useState("text");
-	const [isSelected, setIsSelected] = useState(false);
-
-	const [canvas] = useCanvasImperativeAPI();
-	const [mode] = useCanvasMode();
+	const setText = useSetAtom(canvasTextAtom);
 
 	return (
-		<Fragment>
-			<button
-				disabled={isSelected || mode.inSelectMode}
-				className={
-					isSelected
-						? "mr-1 bg-black p-1 text-4xl"
-						: "mr-1 bg-white p-1 text-4xl"
-				}
-				onClick={() => {
-					setIsSelected(true);
-				}}
-			>
-				<TextIcon />
-			</button>
-			{isSelected
-				? createPortal(
-						<div className="absolute left-0 top-0 grid h-full w-full place-items-center">
-							<div className="rounded bg-white p-5">
-								<input
-									className="mb-2 w-full rounded border-2 border-black bg-white p-2"
-									type="text"
-									placeholder="add text for image"
-									onChange={(e) => {
-										setInputText(e.currentTarget.value);
-									}}
-								/>
-								<div className="w-full">
-									<button
-										className="mr-1 rounded bg-blue-500 p-2 text-xl font-bold text-white"
-										onClick={() => {
-											canvas?.drawText(inputText, 100, 100);
-											setIsSelected(false);
-										}}
-									>
-										save
-									</button>
-									<button
-										className="mr-1 rounded bg-blue-500 p-2 text-xl font-bold text-white"
-										onClick={() => {
-											setIsSelected(false);
-										}}
-									>
-										cancel
-									</button>
-								</div>
-							</div>
-						</div>,
-						document.body,
-					)
-				: null}
-		</Fragment>
+		<button
+			className="cursor-pointer p-2 text-2xl"
+			onClick={() => {
+				setText("hello world");
+			}}
+		>
+			<TextIcon />
+		</button>
 	);
 }
 
