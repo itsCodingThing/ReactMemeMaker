@@ -1,9 +1,12 @@
+"use client";
+
 import Canvas from "@/components/editor/canvas";
 import { decode } from "js-base64";
+import { useParams } from "next/navigation";
 
-export default async function EditorPage(props: PageProps<"/editor/[image]">) {
-	const { image } = await props.params;
-	const imageSrc = decode(image);
+export default function EditorPage() {
+  const params = useParams<{ image: string }>();
+  const imageSrc = decode(params.image);
 
-	return <Canvas img={imageSrc} />;
+  return <Canvas img={imageSrc} />;
 }
