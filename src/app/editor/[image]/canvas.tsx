@@ -42,7 +42,7 @@ export default function Canvas({ img = "" }: CanvasProps) {
 				ref={(ref) => {
 					setCanvasStageRef(ref);
 				}}
-				className="bg-white w-fit"
+				className="border border-neutral-300"
 				width={canvasImg.currentSize.width}
 				height={canvasImg.currentSize.height}
 			>

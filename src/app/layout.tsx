@@ -2,22 +2,25 @@ import "@/styles/tailwind.css";
 import "@/styles/app.css";
 
 import { type Metadata } from "next";
-import { Lora } from "next/font/google";
+import { Inter } from "next/font/google";
 
 export const metadata: Metadata = {
-	title: "react meme maker",
-	description: "meme maker in react",
+	title: "Make-a-Meme",
+	description: "Create memes with custom text and templates",
 };
 
-const font = Lora({
+const font = Inter({
 	display: "swap",
-	weight: ["400", "700"],
+	subsets: ["latin"],
+	weight: ["400", "500", "600", "700"],
 });
 
 export default function RootLayout(props: LayoutProps<"/">) {
 	return (
 		<html lang="en">
-			<body className={`${font.className} bg-slate-300`}>{props.children}</body>
+			<body className={`${font.className} bg-black min-h-screen`}>
+				{props.children}
+			</body>
 		</html>
 	);
 }

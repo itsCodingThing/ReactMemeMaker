@@ -1,7 +1,7 @@
 "use client";
 
-import Canvas from "@/components/editor/canvas";
-import { Toolbar } from "@/components/editor/toolbar";
+import Canvas from "./canvas";
+import { Toolbar } from "./toolbar";
 import { decode } from "js-base64";
 import { useParams } from "next/navigation";
 import { Provider } from "jotai";
@@ -12,7 +12,7 @@ export default function EditorPage() {
 
 	return (
 		<Provider>
-			<div className="bg-gray-700 h-dvh flex flex-col items-center justify-center">
+			<div className="bg-gradient-neutral min-h-screen flex flex-col items-center justify-center gap-6 p-6">
 				<Toolbar />
 				<Canvas img={imageSrc} />
 			</div>
