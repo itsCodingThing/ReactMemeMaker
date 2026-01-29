@@ -22,6 +22,7 @@ function GenerateImage() {
 					link.download = "download.png";
 					link.href = canvasStageRef.toDataURL();
 					link.setAttribute("class", "hidden");
+
 					document.body.appendChild(link);
 					link.click();
 					document.body.removeChild(link);

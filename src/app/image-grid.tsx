@@ -7,7 +7,7 @@ export default async function ImageGrid() {
 	const images = await list();
 
 	return (
-		<div className="columns-1 sm:columns-2 md:columns-3 lg:columns-4">
+		<div className="columns-2 md:columns-3 lg:columns-4">
 			{images.blobs.map((image) => (
 				<Link key={image.pathname} href={`/editor/${encode(image.url)}`}>
 					<Image
