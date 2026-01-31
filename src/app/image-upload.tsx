@@ -12,7 +12,7 @@ export default function ImageUpload() {
 	const [state, formAction, isPending] = useActionState(uploadImage, {
 		success: true,
 	});
-	const [sizeError, setSizeError] = useState<String | null>(null);
+	const [sizeError, setSizeError] = useState<string | null>(null);
 
 	return (
 		<Card>
