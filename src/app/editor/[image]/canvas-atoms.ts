@@ -8,5 +8,5 @@ interface ImageAtom {
 	url: string;
 }
 export const canvasImgAtom = atom<ImageAtom | null>(null);
-export const canvasTextAtom = atom("");
+export const canvasTextAtom = atom({ text: "", color: "#000000" });
 export const canvasStageRefAtom = atom<konva.Stage | null>(null);

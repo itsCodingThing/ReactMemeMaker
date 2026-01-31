@@ -1,7 +1,11 @@
-import { Layer, Stage, Image } from "react-konva";
+import { Layer, Stage, Image, Text } from "react-konva";
 import { useAtom } from "jotai";
-import { canvasImgAtom, canvasStageRefAtom } from "./canvas-atoms";
-import { useSetAtom } from "jotai/react";
+import {
+	canvasImgAtom,
+	canvasStageRefAtom,
+	canvasTextAtom,
+} from "./canvas-atoms";
+import { useAtomValue, useSetAtom } from "jotai/react";
 import useImage from "use-image";
 import { useEffect } from "react";
 import { scaleDownImage } from "@/utils/image-resize";
@@ -16,6 +20,7 @@ export default function Canvas({ img = "" }: CanvasProps) {
 	const setCanvasStageRef = useSetAtom(canvasStageRefAtom);
 	const [canvasImg, setCanvasImage] = useAtom(canvasImgAtom);
 	const isSmallDevice = useMediaQuery("only screen and (max-width : 768px)");
+	const canvasText = useAtomValue(canvasTextAtom);
 
 	useEffect(() => {
 		if (image) {
@@ -55,6 +60,15 @@ export default function Canvas({ img = "" }: CanvasProps) {
 						width={canvasImg.currentSize.width}
 						height={canvasImg.currentSize.height}
 					/>
+
+					{canvasText.text.length > 0 ? (
+						<Text
+							text={canvasText.text}
+							fontSize={15}
+							fill={canvasText.color}
+							draggable
+						/>
+					) : null}
 				</Layer>
 			</Stage>
 		);
