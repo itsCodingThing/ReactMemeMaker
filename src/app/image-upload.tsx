@@ -35,7 +35,7 @@ export default function ImageUpload() {
 					}}
 				>
 					<Field>
-						<Input name="imageFile" id="select-file" type="file" />
+						<Input required name="imageFile" id="select-file" type="file" />
 						{sizeError && (
 							<FieldDescription className="text-red-600">
 								{sizeError}

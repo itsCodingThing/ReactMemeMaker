@@ -1,24 +1,26 @@
 import { useSetAtom } from "jotai";
-import { DownloadIcon, HandPointer, TextIcon } from "@/components/icons";
+import { DownloadIcon, TextIcon } from "@/components/icons";
 import { canvasStageRefAtom, canvasTextAtom } from "./canvas-atoms";
 import { useAtomValue } from "jotai/react";
-
-function SelectButton() {
-	return (
-		<button
-			className="cursor-pointer p-2 text-2xl text-neutral-700 hover:text-neutral-900 hover:bg-neutral-300 rounded transition-colors duration-250"
-			title="Select"
-		>
-			<HandPointer />
-		</button>
-	);
-}
+import { ButtonGroup } from "@/components/ui/button-group";
+import { Button } from "@/components/ui/button";
+import {
+	DialogHeader,
+	DialogFooter,
+	Dialog,
+	DialogTrigger,
+	DialogContent,
+	DialogTitle,
+	DialogDescription,
+	DialogClose,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
 
 function GenerateImage() {
 	const canvasStageRef = useAtomValue(canvasStageRefAtom);
 
 	return (
-		<button
+		<Button
 			onClick={() => {
 				if (canvasStageRef) {
 					const link = document.createElement("a");
@@ -31,11 +33,10 @@ function GenerateImage() {
 					document.body.removeChild(link);
 				}
 			}}
-			className="cursor-pointer p-2 text-2xl text-neutral-700 hover:text-neutral-900 hover:bg-neutral-300 rounded transition-colors duration-250"
 			title="Download"
 		>
 			<DownloadIcon />
-		</button>
+		</Button>
 	);
 }
 
@@ -43,24 +44,46 @@ function AddTextButton() {
 	const setText = useSetAtom(canvasTextAtom);
 
 	return (
-		<button
-			className="cursor-pointer p-2 text-2xl text-neutral-700 hover:text-neutral-900 hover:bg-neutral-300 rounded transition-colors duration-250"
-			title="Add Text"
-			onClick={() => {
-				setText("hello world");
-			}}
-		>
-			<TextIcon />
-		</button>
+		<Dialog>
+			<form
+				onSubmit={(e) => {
+					e.preventDefault();
+
+					const formData = new FormData(e.currentTarget);
+					const data = Object.fromEntries(formData.entries());
+
+					console.log(data);
+				}}
+			>
+				<DialogTrigger asChild>
+					<Button title="Add Text">
+						<TextIcon />
+					</Button>
+				</DialogTrigger>
+				<DialogContent className="sm:max-w-[425px]">
+					<DialogHeader>
+						<DialogTitle>Add Text</DialogTitle>
+						<DialogDescription>add text on the image</DialogDescription>
+					</DialogHeader>
+					<div>
+						<Input name="text" placeholder="add text..." />
+					</div>
+					<DialogFooter>
+						<DialogClose asChild>
+							<Button variant="outline">Cancel</Button>
+						</DialogClose>
+						<Button type="submit">Add</Button>
+					</DialogFooter>
+				</DialogContent>
+			</form>
+		</Dialog>
 	);
 }
 
 export function Toolbar() {
 	return (
-		<div className="bg-neutral-200/80 backdrop-blur-sm rounded-lg shadow-medium border border-neutral-300 p-2 flex gap-2">
+		<ButtonGroup>
 			<AddTextButton />
-			<SelectButton />
-			<GenerateImage />
-		</div>
+		</ButtonGroup>
 	);
 }

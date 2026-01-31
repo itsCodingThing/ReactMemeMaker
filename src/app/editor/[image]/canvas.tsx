@@ -5,6 +5,7 @@ import { useSetAtom } from "jotai/react";
 import useImage from "use-image";
 import { useEffect } from "react";
 import { scaleDownImage } from "@/utils/image-resize";
+import { useMediaQuery } from "@uidotdev/usehooks";
 
 interface CanvasProps {
 	img: string;
@@ -14,14 +15,16 @@ export default function Canvas({ img = "" }: CanvasProps) {
 	const [image, state] = useImage(img, "anonymous");
 	const setCanvasStageRef = useSetAtom(canvasStageRefAtom);
 	const [canvasImg, setCanvasImage] = useAtom(canvasImgAtom);
+	const isSmallDevice = useMediaQuery("only screen and (max-width : 768px)");
 
 	useEffect(() => {
 		if (image) {
+			const length = isSmallDevice ? 300 : 500;
 			const size = scaleDownImage(
 				image.naturalWidth,
 				image.naturalHeight,
-				300,
-				300,
+				length,
+				length,
 			);
 
 			setCanvasImage({
@@ -34,7 +37,7 @@ export default function Canvas({ img = "" }: CanvasProps) {
 				url: image.src,
 			});
 		}
-	}, [image]);
+	}, [image, isSmallDevice]);
 
 	if (state === "loaded" && image && canvasImg) {
 		return (
